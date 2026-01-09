@@ -64,7 +64,7 @@ export const TrendingCoinsFallback = () => {
         <DataTable
           data={data}
           columns={columns}
-          rowKey={(row: any) => row.id}
+          rowKey={(row) => row.id}
           tableClassName="trending-coins-table"
           headerCellClassName="py-3!"
           bodyCellClassName="py-2!"

@@ -16,6 +16,7 @@ export function formatCurrency(value: number | null | undefined, currency = 'USD
       minimumFractionDigits: 2,
     }).format(value)
   } catch (e) {
+    console.error(e)
     // Fallback to a simple formatted string
     return `${currency} ${Number(value).toLocaleString(undefined, {
       minimumFractionDigits: 2,

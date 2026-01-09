@@ -4,9 +4,17 @@ import { TrendingDown, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import DataTable from '../DataTable'
+import { TrendingCoinsFallback } from './fallback'
 
 const TrendingCoins = async () => {
-  const trendingCoins = await fetcher<{ coins: TrendingCoin[] }>('/search/trending', undefined, 300)
+  let trendingCoins
+
+  try {
+    trendingCoins = await fetcher<{ coins: TrendingCoin[] }>('/search/trending', undefined, 300)
+  } catch (error) {
+    console.error('Error fetching trending coins:', error)
+    return <TrendingCoinsFallback />
+  }
 
   const columns: DataTableColumn<TrendingCoin>[] = [
     {
@@ -28,7 +36,8 @@ const TrendingCoins = async () => {
       cellClassName: 'name-cell',
       cell: (coin) => {
         const item = coin.item
-        const isTrendingUp = item.data.price_change_percentage_24h.usd > 0
+        const priceChange = item.data?.price_change_percentage_24h?.usd ?? 0
+        const isTrendingUp = priceChange > 0
 
         return (
           <div className={cn('price-change', isTrendingUp ? 'text-green-500' : 'text-red-500')}>
@@ -38,7 +47,7 @@ const TrendingCoins = async () => {
               ) : (
                 <TrendingDown width={16} height={16} />
               )}
-              {Math.abs(item.data.price_change_percentage_24h.usd).toFixed(2)}%
+              {Math.abs(priceChange).toFixed(2)}%
             </p>
           </div>
         )
@@ -55,16 +64,14 @@ const TrendingCoins = async () => {
     <div id="trending-coins">
       <h4>Trending Coins</h4>
 
-      <div id="trending-coins">
-        <DataTable
-          data={trendingCoins.coins.slice(0, 6) || []}
-          columns={columns}
-          rowKey={(row) => row.item.id}
-          tableClassName="trending-coins-table"
-          headerCellClassName='py-3!'
-          bodyCellClassName='py-2!'
-        />
-      </div>
+      <DataTable
+        data={trendingCoins.coins.slice(0, 6) || []}
+        columns={columns}
+        rowKey={(row) => row.item.id}
+        tableClassName="trending-coins-table"
+        headerCellClassName="py-3!"
+        bodyCellClassName="py-2!"
+      />
     </div>
   )
 }

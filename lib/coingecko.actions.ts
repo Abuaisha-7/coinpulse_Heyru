@@ -1,4 +1,4 @@
-'use server'
+'server-only'
 
 import qs from 'query-string'
 
@@ -20,8 +20,6 @@ export async function fetcher<T>(
     },
     { skipEmptyString: true, skipNull: true },
   )
-
-  console.log('coingecko URL:', url)
 
   const response = await fetch(url, {
     headers: {
