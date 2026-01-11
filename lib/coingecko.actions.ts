@@ -29,18 +29,11 @@ export async function fetcher<T>(
     next: { revalidate },
   })
 
-  // if (!response.ok) {
-  //   const errorBody: CoinGeckoErrorBody = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    const errorBody: CoinGeckoErrorBody = await response.json().catch(() => ({}))
 
-  //   throw new Error(`API Error: ${response.status}: ${errorBody.error || response.statusText} `)
-  // }
-
-  // lib/coingecko.actions.ts
-if (!response.ok) {
-  const errorText = await response.text(); // Get raw text to see the error message
-  console.error("COINGECKO SERVER SAYS:", errorText); 
-  throw new Error(`API Error: ${response.status}`);
-}
+    throw new Error(`API Error: ${response.status}: ${errorBody.error || response.statusText} `)
+  }
 
   return response.json()
 }
