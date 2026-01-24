@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  Pagination,
+  Pagination as PaginationComponent,
   PaginationContent,
   PaginationItem,
   PaginationLink,
@@ -23,7 +23,7 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
 
   return (
     <div>
-      <Pagination id="coins-pagination">
+      <PaginationComponent id="coins-pagination">
         <PaginationContent className="pagination-content">
           <PaginationItem className="pagination-control prev">
             <PaginationPrevious
@@ -38,9 +38,12 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
                 {page === ELLIPSIS ? (
                   <span className="ellipsis">...</span>
                 ) : (
-                  <PaginationLink onClick={() => handlePageChange(page)}
-                  className={cn('page-link', {'page-link-active' : currentPage === page})}
-                  >{page}</PaginationLink>
+                  <PaginationLink
+                    onClick={() => handlePageChange(page)}
+                    className={cn('page-link', { 'page-link-active': currentPage === page })}
+                  >
+                    {page}
+                  </PaginationLink>
                 )}
               </PaginationItem>
             ))}
@@ -53,7 +56,7 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
             />
           </PaginationItem>
         </PaginationContent>
-      </Pagination>
+      </PaginationComponent>
     </div>
   )
 }
