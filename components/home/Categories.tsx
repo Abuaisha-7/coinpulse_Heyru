@@ -53,6 +53,8 @@ const Categories = async () => {
       cell: (category) => formatCurrency(category.volume_24h),
     },
   ]
+
+  
   return (
     <div id="categories" className="custom-scrollbar">
       <h4>Top Categories</h4>
