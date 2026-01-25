@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 
-const WS_BASE = `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key
-=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`
+const WS_BASE =
+  process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL && process.env.NEXT_PUBLIC_COINGECKO_API_KEY
+    ? `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`
+    : null
 
 export const useCoinGeckoWebSocket = ({
   coinId,
@@ -18,6 +20,7 @@ export const useCoinGeckoWebSocket = ({
   const [isWsReady, setIsWsReady] = useState(false)
 
   useEffect(() => {
+    if (!WS_BASE) return
     const ws = new WebSocket(WS_BASE)
     wsRef.current = ws
 
@@ -131,12 +134,12 @@ export const useCoinGeckoWebSocket = ({
     const poolAddress = poolId.replace('_', ':')
 
     if (poolAddress) {
-      subscribe('OnchaingTrade', {
+      subscribe('OnchainTrade', {
         'network_id:pool_addresses': [poolAddress],
         action: 'set_pools',
       })
 
-      subscribe('OnchaingOHLCV', {
+      subscribe('OnchainOHLCV', {
         'network_id:pool_addresses': [poolAddress],
         interval: liveInterval,
         action: 'set_pools',
