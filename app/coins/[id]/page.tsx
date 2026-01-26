@@ -1,3 +1,4 @@
+import Converter from '@/components/Converter'
 import LiveDataWrapper from '@/components/LiveDataWrapper'
 import { fetcher, getPools } from '@/lib/coingecko.actions'
 import { formatCurrency } from '@/lib/utils'
@@ -23,7 +24,7 @@ const page = async ({ params }: NextPageProps) => {
     ? coinData.detail_platforms?.[coinData.asset_platform_id]
     : null
 
-  const network = platform?.geckoterminal_url.split('/')[3] || null
+  const network = platform?.geckoterminal_url?.split('/')[3] || null
   const contractAddress = platform?.contract_address || null
 
   const pool = await getPools(id, network, contractAddress)
@@ -62,7 +63,7 @@ const page = async ({ params }: NextPageProps) => {
   ]
 
   return (
-    <main id="coin-details-age">
+    <main id="coin-details-page">
       <section className="primary">
         <LiveDataWrapper coinId={id} poolId={pool.id} coin={coinData} coinOHLCData={coinOHLCData}>
           <h4>Exchange Listings</h4>
@@ -70,7 +71,11 @@ const page = async ({ params }: NextPageProps) => {
       </section>
 
       <section className="secondary">
-        <p>Converter</p>
+        <Converter
+          symbol={coinData.symbol}
+          priceList={coinData.market_data.current_price}
+          icon={coinData.image.small}
+        />
 
         <div className="details">
           <h4>Coin Details</h4>
