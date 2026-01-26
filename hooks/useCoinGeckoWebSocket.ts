@@ -1,8 +1,10 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 
 const WS_BASE =
   process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL && process.env.NEXT_PUBLIC_COINGECKO_API_KEY
-    ? `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`
+    ? `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x-cg-demo-api-key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`
     : null
 
 export const useCoinGeckoWebSocket = ({
@@ -145,7 +147,7 @@ export const useCoinGeckoWebSocket = ({
         action: 'set_pools',
       })
     }
-  }, [coinId, liveInterval, poolId, isWsReady])
+  }, [coinId, poolId, isWsReady, liveInterval])
 
   return { price, trades, ohlcv, isConnected: isWsReady }
 }
