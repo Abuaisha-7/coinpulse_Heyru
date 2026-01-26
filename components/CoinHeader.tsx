@@ -50,26 +50,32 @@ const CoinHeader = ({
           <h1>{formatCurrency(livePrice)}</h1>
           <Badge className={cn('badge', isTrendingUp ? 'badge-up' : 'badge-down')}>
             {formatPercentage(livePriceChangePercentage24h)}
-            {isTrendingUp ? <TrendingUp/> : <TrendingDown/>}
+            {isTrendingUp ? <TrendingUp /> : <TrendingDown />}
             (24h)
           </Badge>
         </div>
       </div>
 
-      <ul className='stats'>
+      <ul className="stats">
         {stats.map((stat) => (
-            <li key={stat.label}>
-                <p className='label'>{stat.label}</p>
+          <li key={stat.label}>
+            <p className="label">{stat.label}</p>
 
-                <div className={cn('value', {
-                    'text-green-500': stat.isUp,
-                    'text-red-500': !stat.isUp,
-                })}>
-                    <p>{stat.formatter(stat.value)}</p>
-                    {stat.showIcon && (stat.isUp ? <TrendingUp width={16} height={16}/> : <TrendingDown width={16} height={16}/>)}
-                    
-                </div>
-            </li>
+            <div
+              className={cn('value', {
+                'text-green-500': stat.isUp,
+                'text-red-500': !stat.isUp,
+              })}
+            >
+              <p>{stat.formatter(stat.value)}</p>
+              {stat.showIcon &&
+                (stat.isUp ? (
+                  <TrendingUp width={16} height={16} />
+                ) : (
+                  <TrendingDown width={16} height={16} />
+                ))}
+            </div>
+          </li>
         ))}
       </ul>
     </div>
