@@ -1,12 +1,18 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const Header = () => {
+const SearchModal = dynamic(() => import('./SearchModal').then((m) => m.SearchModal), {
+  ssr: false,
+})
+
+const Header = ({ trendingCoins = [] }: { trendingCoins?: TrendingCoin[] }) => {
   const pathname = usePathname()
+
   return (
     <header>
       <div className="main-container inner">
@@ -24,7 +30,8 @@ const Header = () => {
           >
             Home
           </Link>
-          <p>Search Modal</p>
+
+          <SearchModal initialTrendingCoins={trendingCoins} />
           <Link
             href={'/coins'}
             className={cn('nav-link', {

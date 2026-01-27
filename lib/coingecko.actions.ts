@@ -75,3 +75,52 @@ const poolData = await fetcher<{ data: PoolData[] }>(
     return fallback;
   }
 }
+
+/**
+ * SearchCoins: Implements the "Two-Step Data Merge"
+ * 1. Search for coin IDs based on query
+ * 2. Fetch full market data (price, 24h change) for those IDs
+ */
+export async function searchCoins(query: string) {
+  if (!query) return [];
+
+  try {
+    // STEP 1: Get matching coin IDs
+    // Returns: { coins: [{ id: 'bitcoin', ... }, { id: 'wrapped-bitcoin', ... }] }
+    const searchResults = await fetcher<{ coins: SearchCoin[] }>("search", { query });
+
+    if (!searchResults.coins || searchResults.coins.length === 0) return [];
+
+    // Extract IDs and join them: "bitcoin,ethereum,cardano"
+    const ids = searchResults.coins
+      .slice(0, 10)
+      .map((coin) => coin.id)
+      .join(",");
+
+    // STEP 2: Fetch actual market data (Price & 24h change) using the IDs
+    // The markets endpoint provides the 'current_price' and 'price_change_percentage_24h'
+    const enrichedCoins = await fetcher<SearchCoin[]>("coins/markets", {
+      vs_currency: "usd",
+      ids: ids,
+      order: "market_cap_desc",
+      sparkline: false,
+      price_change_percentage: "24h",
+    });
+
+    return enrichedCoins;
+  } catch (error) {
+    console.error("searchCoins error:", error);
+    return [];
+  }
+}
+
+export async function getTrendingCoins(): Promise<TrendingCoin[]> {
+  try {
+    const res = await fetcher<{ coins: TrendingCoin[] }>('search/trending')
+    return res.coins ?? []
+  } catch (error) {
+    console.error('getTrendingCoins error:', error)
+    return []
+  }
+}
+
