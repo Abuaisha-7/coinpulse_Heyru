@@ -41,38 +41,34 @@ export async function fetcher<T>(
 export async function getPools(
   id: string,
   network?: string | null,
-  contractAddress?: string | null
+  contractAddress?: string | null,
 ): Promise<PoolData> {
   const fallback: PoolData = {
-    id: "",
-    address: "",
-    name: "",
-    network: "",
-  };
+    id: '',
+    address: '',
+    name: '',
+    network: '',
+  }
 
   if (network && contractAddress) {
     try {
-const poolData = await fetcher<{ data: PoolData[] }>(
-      `/onchain/networks/${network}/tokens/${contractAddress}/pools`
-    );
+      const poolData = await fetcher<{ data: PoolData[] }>(
+        `/onchain/networks/${network}/tokens/${contractAddress}/pools`,
+      )
 
-    return poolData.data?.[0] ?? fallback;
+      return poolData.data?.[0] ?? fallback
     } catch (error) {
       console.log(error)
-       return fallback;
+      return fallback
     }
-    
   }
 
   try {
-    const poolData = await fetcher<{ data: PoolData[] }>(
-      "/onchain/search/pools",
-      { query: id }
-    );
+    const poolData = await fetcher<{ data: PoolData[] }>('/onchain/search/pools', { query: id })
 
-    return poolData.data?.[0] ?? fallback;
+    return poolData.data?.[0] ?? fallback
   } catch {
-    return fallback;
+    return fallback
   }
 }
 
@@ -82,35 +78,46 @@ const poolData = await fetcher<{ data: PoolData[] }>(
  * 2. Fetch full market data (price, 24h change) for those IDs
  */
 export async function searchCoins(query: string) {
-  if (!query) return [];
+  if (!query) return []
 
   try {
     // STEP 1: Get matching coin IDs
     // Returns: { coins: [{ id: 'bitcoin', ... }, { id: 'wrapped-bitcoin', ... }] }
-    const searchResults = await fetcher<{ coins: SearchCoin[] }>("search", { query });
+    const searchResults = await fetcher<{ coins: SearchCoin[] }>('search', { query })
 
-    if (!searchResults.coins || searchResults.coins.length === 0) return [];
+    if (!searchResults.coins || searchResults.coins.length === 0) return []
 
     // Extract IDs and join them: "bitcoin,ethereum,cardano"
     const ids = searchResults.coins
       .slice(0, 10)
       .map((coin) => coin.id)
-      .join(",");
+      .join(',')
 
     // STEP 2: Fetch actual market data (Price & 24h change) using the IDs
     // The markets endpoint provides the 'current_price' and 'price_change_percentage_24h'
-    const enrichedCoins = await fetcher<SearchCoin[]>("coins/markets", {
-      vs_currency: "usd",
+    const marketCoins = await fetcher<CoinMarketData2[]>('coins/markets', {
+      vs_currency: 'usd',
       ids: ids,
-      order: "market_cap_desc",
+      order: 'market_cap_desc',
       sparkline: false,
-      price_change_percentage: "24h",
-    });
+      price_change_percentage: '24h',
+    })
 
-    return enrichedCoins;
+    return marketCoins.map((coin) => ({
+      id: coin.id,
+      name: coin.name,
+      symbol: coin.symbol,
+      market_cap_rank: coin.market_cap_rank ?? null,
+      thumb: coin.image ?? '',
+      large: coin.image ?? '',
+      data: {
+        price: coin.current_price,
+        price_change_percentage_24h: coin.price_change_percentage_24h ?? 0,
+      },
+    }))
   } catch (error) {
-    console.error("searchCoins error:", error);
-    return [];
+    console.error('searchCoins error:', error)
+    return []
   }
 }
 
@@ -123,4 +130,3 @@ export async function getTrendingCoins(): Promise<TrendingCoin[]> {
     return []
   }
 }
-

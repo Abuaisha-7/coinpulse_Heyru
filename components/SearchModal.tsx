@@ -45,11 +45,8 @@ const SearchItem = ({ coin, onSelect, isActiveName }: SearchItemProps) => {
           'text-red-500': change < 0,
         })}
       >
-        {change > 0 ? (
-          <TrendingUp size={14} className="text-green-500" />
-        ) : (
-          <TrendingDown size={14} className="text-red-500" />
-        )}
+        {change > 0 && <TrendingUp size={14} className="text-green-500" />}
+        {change < 0 && <TrendingDown size={14} className="text-red-500" />}
         <span>{formatPercentage(Math.abs(change))}</span>
       </div>
     </CommandItem>
