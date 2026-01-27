@@ -36,7 +36,7 @@ interface Ticker {
   trade_url: string
 }
 
-type Period = 'daily' | 'weekly' | 'monthly' | '3months' | '6months' | 'yearly' 
+type Period = 'daily' | 'weekly' | 'monthly' | '3months' | '6months' | 'yearly'
 
 interface CoinMarketData {
   id: string
@@ -64,6 +64,16 @@ interface CoinMarketData {
   atl_change_percentage: number
   atl_date: string
   last_updated: string
+}
+
+interface CoinMarketData2 {
+  id: string
+  name: string
+  symbol: string
+  image?: string
+  market_cap_rank?: number | null
+  current_price?: number
+  price_change_percentage_24h?: number | null
 }
 
 interface TrendingCoin {
